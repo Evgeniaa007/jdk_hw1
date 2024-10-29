@@ -55,6 +55,7 @@ public class ServerWindow extends JFrame{
     //Метод сборки окна сервера
     private void createServerWin(){
         log = new JTextArea();
+        log.setEditable(false);
         add(log);
         add(createButtons(), BorderLayout.SOUTH);
     }
