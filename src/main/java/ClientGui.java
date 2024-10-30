@@ -11,7 +11,8 @@ public class ClientGui extends JFrame {
     public static final int HEIGHT = 300;
 
     ServerWindow serverWindow;
-    private boolean connected;
+    boolean connected;
+    String clientName;
 
 
     JPanel topPanel;
@@ -19,6 +20,7 @@ public class ClientGui extends JFrame {
     JTextField loginField, passwField, ipField, portField, messageField;
     JTextArea log;
     JButton btnLogin, btnSend;
+
 
     ClientGui(ServerWindow serverWindow) {
         this.serverWindow = serverWindow;
@@ -30,14 +32,19 @@ public class ClientGui extends JFrame {
         setVisible(true);
     }
 
-    private void appendLog(String text){
+    public void appendLog(String text){
         log.append(text + "\n");
     }
 
     public void displayText(){
-        String message = messageField.getText();
-        appendLog(message);
-
+        if(connected){
+            String message = messageField.getText();
+            serverWindow.message(clientName + ": " + message);
+            messageField.setText("");
+        }
+        else {
+            appendLog("Вы не подключены к серверу. Для отправки сообщений произведите подключение.");
+        }
     }
 
     //верхняя часть окна клиента
@@ -48,6 +55,13 @@ public class ClientGui extends JFrame {
         loginField = new JTextField ("Ivan_Igorevich");
         passwField = new JPasswordField ("123456");
         btnLogin = new JButton("Login");
+
+        btnLogin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                connectToServer();
+            }
+        });
 
         topPanel.add(ipField);
         topPanel.add(portField);
@@ -82,6 +96,14 @@ public class ClientGui extends JFrame {
                 displayText();
             }
         });
+        btnSend.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(e.getKeyChar() == '\n'){
+                    displayText();
+                }
+            }
+        });
 
         bottomPanel.add(messageField);
         bottomPanel.add(btnSend, BorderLayout.EAST);
@@ -95,6 +117,25 @@ public class ClientGui extends JFrame {
         add(createLog());
         add(createBottomPanel(), BorderLayout.SOUTH);
     }
+
+    // подключает пользователя при условии работы сервера
+    private void connectToServer(){
+        if(serverWindow.loginClient(this)){
+            connected = true;
+            topPanel.setVisible(false);
+            appendLog("Вы успешно подключились!");
+            clientName = loginField.getText();
+            String log = serverWindow.getLog();
+            if (log != null){
+                appendLog(log);
+            }
+        }
+        else {
+            appendLog("Подключение не удалось");
+        }
+    }
+
+
 
 
 
