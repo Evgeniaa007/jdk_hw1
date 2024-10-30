@@ -67,7 +67,7 @@ public class ServerWindow extends JFrame{
     }
 
     //Метод добавления текста в окне сервера
-    private void appendLog(String text){
+    public void appendLog(String text){
         log.append(text + "\n");
     }
 

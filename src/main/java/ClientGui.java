@@ -125,6 +125,7 @@ public class ClientGui extends JFrame {
             topPanel.setVisible(false);
             appendLog("Вы успешно подключились!");
             clientName = loginField.getText();
+            serverWindow.appendLog(clientName + " успешно подключился к беседе.");
             String log = serverWindow.getLog();
             if (log != null){
                 appendLog(log);
